@@ -1,2 +1,0 @@
-# pruebasangular
-Pruebas con angular
