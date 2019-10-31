@@ -31,6 +31,7 @@ app.use((req, res, next) => {
 app.post('/api/posts', (req, res, next) => {
     console.log('llega el post al servidor');
     const post = new Post({
+        _id: req.body.id,
         title: req.body.title,
         content: req.body.content
     });
@@ -45,7 +46,7 @@ app.post('/api/posts', (req, res, next) => {
 //TeQsUh3j0CT8NeTv
 //cclafuente user
 
-app.put('/api/posts', (req, res, next) => {
+app.put('/api/posts/:id', (req, res, next) => {
     console.log('llega llamada a servidor');
     const post = new Post({
         _id: req.body.id,
@@ -68,6 +69,16 @@ app.get('/api/posts', (req, res, next) => {
             posts : documents
         });
     });
+});
+
+app.get('/api/posts/:id', (req, res, next) => {
+   Post.findById(req.params.id).then(result => {
+        if (result) {
+            res.status(200).json(result);
+        } else {
+            res.status(404).json({ message: "Post not found"});
+        }
+   })
 });
 
 app.delete('/api/posts/:id', (req, res, next) => {
