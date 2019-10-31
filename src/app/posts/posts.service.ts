@@ -29,12 +29,17 @@ export class PostsService {
         });
     }
 
+    getPost(id: string){
+        return {...this.posts.find(p => p.id === id)};
+    }
+
     getPostUpdatedListener(){
         return this.postsUpdated.asObservable();
     }
 
     addPost(title: string, content: string){
         const post: Post = {id: null, title: title, content: content};
+        console.log(" Post en el cliente (addPost) " + post);
         this.http.post<{ message: string, postId: string }>('http://localhost:3000/api/posts', post).
             subscribe((responseData) => {
                 const postId = responseData.postId;
@@ -43,6 +48,14 @@ export class PostsService {
                 this.postsUpdated.next([...this.posts]);
             });
       
+    }
+
+    updatePost(id: string, title: string, content: string){
+        const post: Post = {id: id, title: title, content: content};
+        console.log(' enviando al servidor ');
+        this.http.put('http://localhost:3000/api/posts/', post).subscribe( response => {
+          console.log(post);  
+        });
     }
 
     deletePost(postId: string){
