@@ -6,6 +6,9 @@ const Post = require('./models/post');
 
 const app = express();
 
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended : false }));
+
 mongoose.connect("mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.mongodb.net/node-angular?retryWrites=true&w=majority")
     .then(() => {
         console.log(' Connected to de database');
@@ -14,23 +17,24 @@ mongoose.connect("mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.m
         console.log(' Connection failed');
     });
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended : false }));
+/*app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended : false }));*/
 
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+    res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, PATCH, DELETE, OPTIONS");
     next();
 });
 
 app.post('/api/posts', (req, res, next) => {
+    console.log('llega el post al servidor');
     const post = new Post({
         title: req.body.title,
         content: req.body.content
     });
-    console.log(' entrando post ' + post);
+    console.log(" post to add " + post);
     post.save().then(savedPost => {
         res.status(201).json({
              message: ' Post added succesfully ', 
@@ -40,6 +44,22 @@ app.post('/api/posts', (req, res, next) => {
 });
 //TeQsUh3j0CT8NeTv
 //cclafuente user
+
+app.put('/api/posts', (req, res, next) => {
+    console.log('llega llamada a servidor');
+    const post = new Post({
+        _id: req.body.id,
+        title: req.body.title,
+        content: req.body.content
+    });
+    console.log(" post to update " + post);
+    Post.updateOne({_id: req.params.id}, post).then(updatedPost => {
+        res.status(201).json({
+             message: ' Post updated succesfully ', 
+             postId : updatedPost._id
+        });
+    });
+});
 
 app.get('/api/posts', (req, res, next) => {
     Post.find().then(documents => {
@@ -52,7 +72,6 @@ app.get('/api/posts', (req, res, next) => {
 
 app.delete('/api/posts/:id', (req, res, next) => {
     Post.deleteOne({_id: req.params.id}).then(result => {
-        console.log(result);
         res.status(200).json({ 
             message : " Post deleted "
         });
