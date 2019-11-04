@@ -1,8 +1,9 @@
 const express = require("express");
+const Post = require("../models/post");
 
-const router = express.router();
+const router = express.Router();
 
-router.post('/api/posts', (req, res, next) => {
+router.post('', (req, res, next) => {
     console.log('llega el post al servidor');
     const post = new Post({
         _id: req.body.id,
@@ -20,7 +21,7 @@ router.post('/api/posts', (req, res, next) => {
 //TeQsUh3j0CT8NeTv
 //cclafuente user
 
-router.put('/api/posts/:id', (req, res, next) => {
+router.put('/:id', (req, res, next) => {
     console.log('llega llamada a servidor');
     const post = new Post({
         _id: req.body.id,
@@ -36,7 +37,7 @@ router.put('/api/posts/:id', (req, res, next) => {
     });
 });
 
-router.get('/api/posts', (req, res, next) => {
+router.get('', (req, res, next) => {
     Post.find().then(documents => {
         res.status(200).json({
             message: ' enviado correctamente',
@@ -45,7 +46,7 @@ router.get('/api/posts', (req, res, next) => {
     });
 });
 
-router.get('/api/posts/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
    Post.findById(req.params.id).then(result => {
         if (result) {
             res.status(200).json(result);
@@ -55,10 +56,12 @@ router.get('/api/posts/:id', (req, res, next) => {
    })
 });
 
-router.delete('/api/posts/:id', (req, res, next) => {
+router.delete('/:id', (req, res, next) => {
     Post.deleteOne({_id: req.params.id}).then(result => {
         res.status(200).json({ 
             message : " Post deleted "
         });
     });
 });
+
+module.exports = router;
