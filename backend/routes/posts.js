@@ -1,34 +1,69 @@
 const express = require("express");
 const Post = require("../models/post");
+const multer = require("multer");
 
 const router = express.Router();
 
-router.post('', (req, res, next) => {
-    console.log('llega el post al servidor');
+const MIME_TYPE_MAP = {
+    'image/png': 'png',
+    'image/jpeg': 'jpg',
+    'image/jpg': 'jpg'
+}
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        const isValid = MIME_TYPE_MAP[file.mimetype];
+        error = new Error(" Invalid mime type");
+        if (isValid){
+            error = null;
+        }
+        cb(error, "backend/images");
+    },
+    filename: (req, file, cb) => {
+        const nombre = file.originalname.toLowerCase().split(' ').join('-');
+        const ext = MIME_TYPE_MAP[file.mimetype];
+        cb(null, nombre + '-' + Date.now() + '.' + ext);
+    }
+});
+
+router.post("", 
+    multer({storage: storage}).single("image"), 
+    (req, res, next) => {
+    const url = req.protocol + "://" + req.get("host");
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        imagePath: url + "/images/" + req.file.filename
     });
-    console.log(" post to add " + post);
     post.save().then(savedPost => {
         res.status(201).json({
              message: ' Post added succesfully ', 
-             postId : savedPost._id
-        });
-    });
+             post : {
+                 _id: savedPost.id,
+                 title: savedPost.title,
+                 content: savedPost.content,
+                 imagePath: savedPost.imagePath
+            }
+        })
+    })
 });
-//TeQsUh3j0CT8NeTv
-//cclafuente user
 
-router.put('/:id', (req, res, next) => {
-    console.log('llega llamada a servidor');
+router.put('/:id', 
+    multer({storage: storage}).single("image"), 
+    (req, res, next) => {
+        let imagePath;
+        if (req.file){
+            const url = req.protocol + "://" + req.get("host");
+            imagePath = url + "/images/" + req.file.filename;
+
+        }
     const post = new Post({
         _id: req.body.id,
         title: req.body.title,
-        content: req.body.content
+        content: req.body.content,
+        imagePath: imagePath
     });
-    console.log(" post to update " + post);
     Post.updateOne({_id: req.params.id}, post).then(updatedPost => {
         res.status(201).json({
              message: ' Post updated succesfully ', 
@@ -65,3 +100,6 @@ router.delete('/:id', (req, res, next) => {
 });
 
 module.exports = router;
+
+//TeQsUh3j0CT8NeTv
+//cclafuente user
