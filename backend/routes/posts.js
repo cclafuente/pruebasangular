@@ -73,12 +73,32 @@ router.put('/:id',
 });
 
 router.get('', (req, res, next) => {
-    Post.find().then(documents => {
-        res.status(200).json({
-            message: ' enviado correctamente',
-            posts : documents
+    console.log(req.query);
+    const pageSize = +req.query.pagesize;
+    const currentPage = +req.query.page;
+    let fetchedPosts;
+    
+    const postQuery = Post.find();
+
+
+    if (pageSize && currentPage){
+        postQuery
+            .skip( pageSize * (currentPage - 1))
+            .limit(pageSize);
+    }
+    postQuery
+        .then(documents => {
+            fetchedPosts = documents;
+        return Post.countDocuments();
+        })
+        .then(count => {
+            console.log(' numero de posts leidos ' + count);
+            res.status(200).json({
+                message: "Post fetched succesfully",
+                posts: fetchedPosts,
+                maxPosts: count
+            });
         });
-    });
 });
 
 router.get('/:id', (req, res, next) => {

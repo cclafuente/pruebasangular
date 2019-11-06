@@ -24,10 +24,6 @@ export class PostsService {
                     imagePath: post.imagePath
                 };
             });
-        }))
-        .subscribe((transformedPosts) => {
-            this.posts = transformedPosts;
-            this.postsUpdated.next([...this.posts]);
         });
     }
 
