@@ -5,10 +5,10 @@ import { NgForm } from "@angular/forms";
     templateUrl: './signup.component.html',
     styleUrls: ['./signup.component.css']
 })
-export class SingUpComponent{
+export class SignupComponent{
     isLoading = false;
 
-    onLogin(form: NgForm){
+    onSignup(form: NgForm){
         console.log(form.value);
     }
 }
