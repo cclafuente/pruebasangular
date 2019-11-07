@@ -10,8 +10,10 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended : false }));
 app.use("/images", express.static(path.join("backend/images")));
-
-mongoose.connect("mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.mongodb.net/node-angular?retryWrites=true&w=majority")
+//
+//mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.mongodb.net/node-angular?retryWrites=true&w=majority
+//
+mongoose.connect("mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.mongodb.net/node-angular")
     .then(() => {
         console.log(' Connected to de database');
     })
@@ -27,6 +29,6 @@ app.use((req, res, next) => {
 });
 
 app.use("/api/posts", postsRoutes);
-app.use("/api/users", userRoutes);
+app.use("/api/user", userRoutes);
 
 module.exports = app;
