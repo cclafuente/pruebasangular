@@ -19,7 +19,7 @@ router.post("/signup", (req, res, next) => {
     });
 });
 
-//probando post
+
 router.post("/login", (req, res, next) => {
     let fetchedUser;
     User.findOne({ email: req.body.email})
