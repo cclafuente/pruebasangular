@@ -15,16 +15,16 @@ export class PostsService {
 
     getPosts(postsPerPage: number, currentPage: number){
         const queryParams = `?pagesize=${postsPerPage}&page=${currentPage}`;
-        console.log(' entrando en gestPosts en el cliente ' + queryParams);
         return this.http.get<{message: 'string', posts: any, maxPosts: number}>('http://localhost:3000/api/posts' + queryParams)
         .pipe(map((postData) => {
             return {
-                posts: postData.posts.map( (post: { title: any; content: any; _id: any; imagePath: any; }) => {
+                posts: postData.posts.map( (post: { title: any; content: any; _id: any; imagePath: any; creator: string }) => {
                     return {
                         title : post.title,
                         content: post.content,
                         id: post._id,
-                        imagePath: post.imagePath
+                        imagePath: post.imagePath,
+                        creator: post.creator
                     };
              }),
              maxPosts : postData.maxPosts
@@ -84,13 +84,6 @@ export class PostsService {
     }
 
     deletePost(postId: string){
-        this.http.delete('http://localhost:3000/api/posts/'+ postId).
-        subscribe(() => {
-            const updatedPosts = this.posts.filter( post => post.id !== postId);
-            this.postsUpdated.next({ 
-                posts: [...updatedPosts], 
-                postCount: updatedPosts.length
-            });
-    });
+        return this.http.delete("http://localhost:3000/api/posts/" + postId);
     }
 }
