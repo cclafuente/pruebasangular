@@ -68,11 +68,16 @@ router.put('/:id',
         content: req.body.content,
         imagePath: imagePath
     });
-    Post.updateOne({_id: req.params.id}, post).then(updatedPost => {
-        res.status(201).json({
-             message: ' Post updated succesfully ', 
-             postId : updatedPost._id
-        });
+    Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post).then(updatedPost => {
+        if (updatedPost.nModified > 0){
+            res.status(201).json({
+                message: ' Post updated succesfully ', 
+                postId : updatedPost._id
+            });
+        }
+        else{
+            res.status(401).json({ message: 'Not authorised!'});
+        }
     });
 });
 
@@ -96,7 +101,6 @@ router.get('', (req, res, next) => {
         return Post.countDocuments();
         })
         .then(count => {
-            console.log(' numero de posts leidos ' + count);
             res.status(200).json({
                 message: "Post fetched succesfully",
                 posts: fetchedPosts,
@@ -118,10 +122,14 @@ router.get('/:id', (req, res, next) => {
 router.delete('/:id', 
     checkAuth,
     (req, res, next) => {
-    Post.deleteOne({_id: req.params.id}).then(result => {
-        res.status(200).json({ 
-            message : " Post deleted "
-        });
+    Post.deleteOne({_id: req.params.id, creator: req.userData.userId}).then(result => {
+        if (result.n > 0){
+            res.status(200).json({ 
+                message : " Post deleted "
+            });
+        }else{
+            res.status(401).json({ message: 'Not authorised!'});
+        }
     });
 });
 
