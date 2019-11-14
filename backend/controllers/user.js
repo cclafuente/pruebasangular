@@ -27,7 +27,7 @@ exports.userLogin = (req, res, next) => {
         return req.body.password == user.password;
     }).then(result => {
         const token = jwt.sign({email: fetchedUser.email, userId: fetchedUser._id}, 
-            'secreto_creador_token',
+            process.env.JWT_KEY,
             {expiresIn: "1h"});
         
         res.status(200).json({

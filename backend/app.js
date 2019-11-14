@@ -13,7 +13,7 @@ app.use("/images", express.static(path.join("backend/images")));
 //
 //mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.mongodb.net/node-angular?retryWrites=true&w=majority
 //
-mongoose.connect("mongodb+srv://cclafuente:TeQsUh3j0CT8NeTv@cluster0-91zhf.gcp.mongodb.net/node-angular")
+mongoose.connect("mongodb+srv://cclafuente:" + process.env.MONGO_ATLAS_PW + "@cluster0-91zhf.gcp.mongodb.net/node-angular")
     .then(() => {
         console.log(' Connected to de database');
     })
