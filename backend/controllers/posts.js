@@ -36,7 +36,7 @@ exports.updatePost = (req, res, next) => {
         imagePath: imagePath
     });
     Post.updateOne({_id: req.params.id, creator: req.userData.userId}, post).then(updatedPost => {
-        if (updatedPost.nModified > 0){
+        if (updatedPost.n > 0){
             res.status(201).json({
                 message: ' Post updated succesfully ', 
                 postId : updatedPost._id
